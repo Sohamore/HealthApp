@@ -4,7 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import { Theme } from '../theme';
 import GlassCard from '../components/GlassCard';
 import PrimaryButton from '../components/PrimaryButton';
-import Animated, { FadeInDown, FadeInUp, Layout } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeInUp, Layout, FadeOut } from 'react-native-reanimated';
 
 const SYMPTOMS = ['Fever', 'Headache', 'Cough', 'Chest Pain', 'Fatigue', 'Stomach Ache', 'Nausea'];
 
@@ -12,8 +12,9 @@ const SymptomCheckerScreen = () => {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [isRecording, setIsRecording] = useState(false);
 
-  const toggleSymptom = (symptom) => {
+  const toggleSymptom = (symptom: string) => {
     if (selectedSymptoms.includes(symptom)) {
       setSelectedSymptoms(selectedSymptoms.filter(s => s !== symptom));
     } else {
@@ -65,11 +66,19 @@ const SymptomCheckerScreen = () => {
           ))}
         </View>
 
-        <TextInput
-          placeholder="Other symptoms (e.g. skin rash, dizziness...)"
-          style={styles.input}
-          placeholderTextColor="#aaa"
-        />
+        <View style={styles.inputWrapper}>
+          <TextInput placeholder="Other symptoms (e.g. skin rash, dizziness...)" style={styles.input} placeholderTextColor="#aaa" />
+          <TouchableOpacity style={styles.micButton} onPress={() => setIsRecording(!isRecording)}>
+            {isRecording ? <Animated.View entering={FadeInDown} exiting={FadeOut} style={styles.pulseDisk} /> : null}
+            <Feather name="mic" size={20} color={isRecording ? Theme.colors.primaryAccent : "#666"} />
+          </TouchableOpacity>
+        </View>
+
+        {isRecording ? (
+          <Animated.View entering={FadeInUp} style={styles.voiceIndicator}>
+            <Text style={styles.voiceText}>Listening... Say your symptoms clearly.</Text>
+          </Animated.View>
+        ) : null}
 
         <PrimaryButton
           title={isAnalyzing ? "Analyzing..." : "Analyze Symptoms"}
@@ -78,14 +87,14 @@ const SymptomCheckerScreen = () => {
         />
       </GlassCard>
 
-      {isAnalyzing && (
+      {isAnalyzing ? (
         <Animated.View entering={FadeInDown} style={styles.loadingContainer}>
            <Feather name="cpu" size={40} color={Theme.colors.primaryAccent} />
            <Text style={styles.loadingText}>Our AI is processing your symptoms...</Text>
         </Animated.View>
-      )}
+      ) : null}
 
-      {result && !isAnalyzing && (
+      {(result && !isAnalyzing) ? (
         <Animated.View entering={FadeInUp} layout={Layout.springify()} style={styles.resultContainer}>
           <GlassCard style={styles.resultCard}>
             <View style={styles.resultHeader}>
@@ -103,14 +112,14 @@ const SymptomCheckerScreen = () => {
               <Text style={styles.actionLabel}>Suggested Action:</Text>
               <Text style={styles.actionText}>{result.action}</Text>
             </View>
-
+ 
             <View style={styles.disclaimerContainer}>
               <Feather name="alert-triangle" size={14} color="#999" />
               <Text style={styles.disclaimerText}>This is not a medical diagnosis. Please consult a doctor for official advice.</Text>
             </View>
           </GlassCard>
         </Animated.View>
-      )}
+      ) : null}
 
       <View style={styles.footerSpace} />
     </ScrollView>
@@ -171,12 +180,43 @@ const styles = StyleSheet.create({
   selectedText: {
     color: Theme.colors.textDark,
   },
-  input: {
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Theme.colors.secondaryBg,
     borderRadius: 12,
+    marginBottom: Theme.spacing.m,
+  },
+  input: {
+    flex: 1,
     padding: Theme.spacing.m,
     ...Theme.typography.bodySmall,
-    marginBottom: Theme.spacing.m,
+  },
+  micButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  pulseDisk: {
+    position: 'absolute',
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(191, 230, 153, 0.4)',
+  },
+  voiceIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  voiceText: {
+    ...Theme.typography.bodySmall,
+    color: Theme.colors.primaryAccent,
+    fontWeight: '700',
+    fontSize: 12,
   },
   button: {
     marginTop: Theme.spacing.s,

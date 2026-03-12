@@ -61,6 +61,18 @@ export default function MainLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="chatbot"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

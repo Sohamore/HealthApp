@@ -18,11 +18,10 @@ import PrimaryButton from '../components/PrimaryButton';
 
 const LoginScreen = () => {
   const router = useRouter();
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [otp, setOtp] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
-  const [name, setName] = useState('');
-  const [village, setVillage] = useState('');
 
   const handleContinue = () => {
     // Basic validation placeholder
@@ -54,38 +53,27 @@ const LoginScreen = () => {
             </View>
 
             <GlassCard style={styles.card}>
-              {isRegistering && (
-                <>
-                  <Input 
-                    label="Full Name" 
-                    placeholder="Enter your name" 
-                    value={name} 
-                    onChangeText={setName} 
-                  />
-                  <Input 
-                    label="Village" 
-                    placeholder="Search your village" 
-                    value={village} 
-                    onChangeText={setVillage} 
-                  />
-                </>
-              )}
-              
               <Input 
-                label="Phone Number" 
-                placeholder="+91 00000 00000" 
-                value={phoneNumber} 
-                onChangeText={setPhoneNumber}
-                keyboardType="phone-pad"
+                label="Username" 
+                placeholder="Enter your username" 
+                value={username} 
+                onChangeText={setUsername}
               />
 
-              {!isRegistering && (
+              <Input 
+                label="Password" 
+                placeholder="Enter your password" 
+                value={password} 
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+
+              {isRegistering && (
                 <Input 
-                  label="OTP Verification" 
-                  placeholder="Enter 4-digit OTP" 
-                  value={otp} 
-                  onChangeText={setOtp}
-                  keyboardType="numeric"
+                  label="Confirm Password" 
+                  placeholder="Repeat your password" 
+                  value={confirmPassword} 
+                  onChangeText={setConfirmPassword}
                   secureTextEntry
                 />
               )}

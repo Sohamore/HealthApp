@@ -5,16 +5,11 @@ import { Theme } from '../theme';
 import GlassCard from '../components/GlassCard';
 import { useRouter } from 'expo-router';
 
+import { DOCTORS_DATA } from '../data/doctors';
+
 const FILTERS = ['General Physician', 'Pediatrician', 'Cardiologist', 'Dermatologist'];
 
-const DOCTORS = [
-  { id: '1', name: 'Dr. Anita Joshi', spec: 'General Physician', exp: '12 yrs', rating: 4.8, online: true, image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150' },
-  { id: '2', name: 'Dr. Rajesh Kumar', spec: 'Pediatrician', exp: '15 yrs', rating: 4.9, online: true, image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150' },
-  { id: '3', name: 'Dr. Smita Patil', spec: 'Dermatologist', exp: '8 yrs', rating: 4.7, online: false, image: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=150' },
-  { id: '4', name: 'Dr. Vikram Singh', spec: 'Cardiologist', exp: '20 yrs', rating: 5.0, online: true, image: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150' },
-];
-
-const DoctorCard = ({ item, onPress }: { item: any; onPress: () => void }) => (
+const DoctorCard = ({ item, onPress, router }: { item: any; onPress: () => void; router: any }) => (
   <TouchableOpacity activeOpacity={0.9} style={styles.cardContainer} onPress={onPress}>
     <GlassCard style={styles.doctorCard}>
       <View style={styles.cardContent}>
@@ -22,22 +17,27 @@ const DoctorCard = ({ item, onPress }: { item: any; onPress: () => void }) => (
         <View style={styles.doctorInfo}>
           <View style={styles.nameRow}>
             <Text style={styles.doctorName}>{item.name}</Text>
-            <View style={[styles.statusDot, { backgroundColor: item.online ? '#4caf50' : '#aaa' }]} />
+            <TouchableOpacity 
+              onPress={(e) => {
+                e.stopPropagation();
+                router.push('/teleconsultation-request');
+              }}
+              style={styles.quickRequestIcon}
+            >
+              <Feather name="video" size={18} color={Theme.colors.primaryAccent} />
+            </TouchableOpacity>
           </View>
           <Text style={styles.specialization}>{item.spec}</Text>
           <View style={styles.statsRow}>
-            <View style={styles.stat}>
-              <Feather name="briefcase" size={12} color="#666" />
-              <Text style={styles.statText}>{item.exp}</Text>
-            </View>
-            <View style={[styles.stat, { marginLeft: 12 }]}>
-              <Feather name="star" size={12} color="#FFB000" />
-              <Text style={styles.statText}>{item.rating}</Text>
-            </View>
+            <View style={styles.stat}><Feather name="briefcase" size={12} color="#666" /><Text style={styles.statText}>{item.exp}</Text></View>
+            <View style={[styles.stat, { marginLeft: 12 }]}><Feather name="star" size={12} color="#FFB000" /><Text style={styles.statText}>{item.rating}</Text></View>
           </View>
         </View>
       </View>
-      <TouchableOpacity style={styles.bookButton} onPress={onPress}>
+      <TouchableOpacity 
+        style={styles.bookButton} 
+        onPress={() => router.push('/teleconsultation-request')}
+      >
         <Text style={styles.bookButtonText}>Book Consultation</Text>
       </TouchableOpacity>
     </GlassCard>
@@ -86,12 +86,13 @@ const DoctorListScreen = () => {
       </View>
 
       <FlatList
-        data={DOCTORS}
+        data={DOCTORS_DATA}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <DoctorCard 
             item={item} 
-            onPress={() => router.push('/teleconsultation-request')} 
+            onPress={() => router.push({ pathname: '/doctor-details', params: { id: item.id } })} 
+            router={router}
           />
         )}
         contentContainerStyle={styles.doctorList}
@@ -198,6 +199,14 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
+  },
+  quickRequestIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(191, 230, 153, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   specialization: {
     ...Theme.typography.bodySmall,

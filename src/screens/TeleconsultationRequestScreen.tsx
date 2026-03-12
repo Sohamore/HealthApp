@@ -5,7 +5,7 @@ import { Theme } from '../theme';
 import GlassCard from '../components/GlassCard';
 import PrimaryButton from '../components/PrimaryButton';
 import { useRouter } from 'expo-router';
-import Animated, { FadeInRight, FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInRight, FadeInUp, FadeOut } from 'react-native-reanimated';
 
 const REASONS = ['General Fever', 'Cough & Cold', 'Skin Issue', 'Stomach Pain', 'Other'];
 const TIME_SLOTS = ['Morning (9 AM - 12 PM)', 'Afternoon (1 PM - 4 PM)', 'Evening (5 PM - 8 PM)'];
@@ -16,6 +16,7 @@ const TeleconsultationRequestScreen = () => {
   const [symptoms, setSymptoms] = useState('');
   const [selectedTime, setSelectedTime] = useState('Morning (9 AM - 12 PM)');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   const handleSubmit = () => {
     setIsSubmitted(true);
@@ -88,15 +89,13 @@ const TeleconsultationRequestScreen = () => {
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Describe your Symptoms</Text>
           <GlassCard style={styles.inputCard}>
-            <TextInput
-              multiline
-              numberOfLines={4}
-              placeholder="e.g. Feeling feverish since last night with a slight headache..."
-              style={styles.textInput}
-              value={symptoms}
-              onChangeText={setSymptoms}
-              placeholderTextColor="#aaa"
-            />
+            <View style={styles.inputWithMic}>
+              <TextInput multiline numberOfLines={4} placeholder="e.g. Feeling feverish since last night with a slight headache..." style={styles.textInput} value={symptoms} onChangeText={setSymptoms} placeholderTextColor="#aaa" />
+              <TouchableOpacity style={styles.micButton} onPress={() => setIsRecording(!isRecording)}>
+                {isRecording && <Animated.View entering={FadeInUp} exiting={FadeOut} style={styles.pulseDisk} />}
+                <Feather name="mic" size={18} color={isRecording ? Theme.colors.primaryAccent : "#666"} />
+              </TouchableOpacity>
+            </View>
           </GlassCard>
         </View>
 
@@ -230,10 +229,29 @@ const styles = StyleSheet.create({
     padding: 12,
     minHeight: 120,
   },
+  inputWithMic: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
   textInput: {
     ...Theme.typography.body,
     fontSize: 14,
     textAlignVertical: 'top',
+    flex: 1,
+  },
+  micButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  pulseDisk: {
+    position: 'absolute',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(191, 230, 153, 0.4)',
   },
   slotCard: {
     flexDirection: 'row',
