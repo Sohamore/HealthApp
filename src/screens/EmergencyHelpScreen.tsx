@@ -6,7 +6,7 @@ import GlassCard from '../components/GlassCard';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
 const EmergencyHelpScreen = () => {
-  const handleCall = (number) => {
+  const handleCall = (number: string) => {
     Linking.openURL(`tel:${number}`);
   };
 

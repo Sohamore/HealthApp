@@ -1,13 +1,38 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { Theme } from '../theme';
 import GlassCard from '../components/GlassCard';
+import MapComponent from '../components/MapComponent';
 
 const PHARMACIES = [
-  { id: '1', name: 'Village Health Pharmacy', distance: '1.2 km', available: true, address: 'Near Bus Stand, Village Road' },
-  { id: '2', name: 'City Medicos', distance: '5.5 km', available: true, address: 'Main Market, District Center' },
-  { id: '3', name: 'Rural Care Point', distance: '0.8 km', available: false, address: 'Opposite Government School' },
+  { 
+    id: '1', 
+    name: 'Village Health Pharmacy', 
+    distance: '1.2 km', 
+    available: true, 
+    address: 'Near Bus Stand, Village Road',
+    latitude: 22.7196,
+    longitude: 75.8577 
+  },
+  { 
+    id: '2', 
+    name: 'City Medicos', 
+    distance: '5.5 km', 
+    available: true, 
+    address: 'Main Market, District Center',
+    latitude: 22.7250,
+    longitude: 75.8650
+  },
+  { 
+    id: '3', 
+    name: 'Rural Care Point', 
+    distance: '0.8 km', 
+    available: false, 
+    address: 'Opposite Government School',
+    latitude: 22.7150,
+    longitude: 75.8520
+  },
 ];
 
 const MedicineAvailabilityScreen = () => {
@@ -32,13 +57,15 @@ const MedicineAvailabilityScreen = () => {
 
       <View style={styles.content}>
         <GlassCard style={styles.mapPreview}>
-           <Image 
-              source={{ uri: 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/75.8577,22.7196,12,0/400x200?access_token=pk.eyJ1Ijoic29oYW0iLCJhIjoiY2sybno...' }} 
-              style={styles.mapImage}
-           />
-           <View style={styles.mapOverlay}>
-              <Text style={styles.mapText}>Finding pharmacies near you...</Text>
-           </View>
+          <MapComponent 
+            pharmacies={PHARMACIES}
+            initialRegion={{
+              latitude: 22.7196,
+              longitude: 75.8577,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.05,
+            }}
+          />
         </GlassCard>
 
         <Text style={styles.sectionTitle}>Nearby Pharmacies</Text>
@@ -119,25 +146,6 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.l,
     padding: 0,
     overflow: 'hidden',
-  },
-  mapImage: {
-    width: '100%',
-    height: '100%',
-    opacity: 0.6,
-  },
-  mapOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    padding: 8,
-    alignItems: 'center',
-  },
-  mapText: {
-    ...Theme.typography.bodySmall,
-    fontSize: 12,
-    fontWeight: '600',
   },
   sectionTitle: {
     ...Theme.typography.subheading,
